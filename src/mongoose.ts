@@ -4,6 +4,7 @@ import logger from "./logger";
 import config from "./config";
 
 export default function mongooseClient(app: Express) {
+  mongoose.Promise = global.Promise;
   mongoose
     .connect(config.databaseConfig.DB_CLOUD_URL, {
       useNewUrlParser: true,

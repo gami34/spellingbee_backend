@@ -46,13 +46,20 @@ export default function StudentModel(app: Application) {
         required: [true, "School's email was not provided"],
       },
       students: [{ type: ObjectId, ref: "Student", required: [true, "School registration ID is required"] }],
-      paymentId: { type: ObjectId, ref: "Payment", required: [true, "Payment ID is required"] },
+      paymentId: { type: ObjectId, ref: "Payment", unique: true, required: [true, "Payment ID is required"] },
     },
     {
       collection: collactionName,
       timestamps: true,
     },
   );
+
+  schema.path("paymentId").validate(async (paymentId: string) => {
+    const paymentIdCount = await mongooseClient.model(modelName).countDocuments({
+      paymentId,
+    });
+    return !paymentIdCount;
+  }, "paymentId already exists");
 
   if (mongooseClient.modelNames().includes(modelName)) {
     mongooseClient.deleteModel(modelName);

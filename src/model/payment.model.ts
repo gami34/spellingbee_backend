@@ -9,12 +9,32 @@ export default function StudentModel(app: Application) {
 
   const schema = new mongooseClient.Schema(
     {
-      paymentId: {
+      flw_ref: {
         type: String,
-        required: [true, "School's payment ID was not provided"],
+        required: [true, "School's payment flw_ref was not provided"],
+      },
+      transaction_id: {
+        type: String,
+        unique: true,
+        required: [true, "School's payment transaction_id was not provided"],
+      },
+      tx_ref: {
+        type: String,
+        unique: true,
+        required: [true, "School's payment tx_ref was not provided"],
+      },
+      status: {
+        type: String,
+        required: [true, "School's payment status was not provided"],
+        enum: ["completed"],
+      },
+      currency: {
+        type: String,
+        required: [true, "School's payment currency was not provided"],
+        enum: ["NGN"],
       },
       amount: {
-        type: String,
+        type: Number,
         required: [true, "School's amount was not provided"],
       },
       number_of_students: {
@@ -24,16 +44,14 @@ export default function StudentModel(app: Application) {
       },
       payment_platform: {
         type: String,
-        required: [true, "Student's category was not provided"],
-      },
-      schools_head: {
-        type: String,
-        required: [true, "School's registration ID was not provided"],
+        required: [true, "Student's payment platform was not provided"],
+        enum: ["flutterwave"],
       },
       school: {
         type: ObjectId,
         ref: "School",
-        required: [true, "School name was not provided"],
+        unique: true,
+        required: [true, "School's registration ID was not provided"],
       },
       students: [{ type: ObjectId, ref: "Student", required: [true, "School registration ID is required"] }],
     },
@@ -42,6 +60,20 @@ export default function StudentModel(app: Application) {
       timestamps: true,
     },
   );
+
+  schema.path("tx_ref").validate(async (txRef: string) => {
+    const txRefCount = await mongooseClient.model(modelName).countDocuments({
+      tx_ref: txRef,
+    });
+    return !txRefCount;
+  }, "This flw_ref has already being processed");
+
+  schema.path("transaction_id").validate(async (transactionId: string) => {
+    const flwRefefCount = await mongooseClient.model(modelName).countDocuments({
+      transaction_id: transactionId,
+    });
+    return !flwRefefCount;
+  }, "This transaction Id has already being processed");
 
   if (mongooseClient.modelNames().includes(modelName)) {
     mongooseClient.deleteModel(modelName);

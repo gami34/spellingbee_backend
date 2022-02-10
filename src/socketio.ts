@@ -93,8 +93,6 @@ export default function socketIO(server: Partial<ServerOptions>, app: Applicatio
     // On a new real-time connection, add it to the anonymous channel
     socket.join("anonymous");
 
-    console.log(`${socket.id} User connected`);
-
     socket.on("join", ({ username, room }, cb) => {
       const { errorCode, massage, user } = socketManaer.addUser({
         username,
@@ -117,7 +115,6 @@ export default function socketIO(server: Partial<ServerOptions>, app: Applicatio
     });
 
     socket.on("disconnect", () => {
-      console.log("a user as discsonncted");
       socket.leave("anonymous");
       socket.join("authenticated");
     });

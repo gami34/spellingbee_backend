@@ -5,7 +5,7 @@ import authHooks from "./registration.hooks";
 const authRouter = express.Router();
 
 export default function authService(app: Application) {
-  authRouter.post("/", authHooks(), controller.registration());
+  authRouter.post("/", authHooks(), controller.registration(app));
 
   app.use("/registration", authRouter);
 }
