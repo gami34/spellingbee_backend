@@ -8,6 +8,7 @@
     "start": "nodemon",
     "test": "jest",
     "test:watch": "jest --watch",
+    "heroku:start": "node ./dist/src",
     "test:coverage": "jest --coverage",
     "lint": "eslint --cache --fix  \"./src/**/*.+(js|ts|yml|yaml|json)\"",
     "format": "prettier --write \"./src/**/*.(js|ts|yml|yaml|json)\"",
